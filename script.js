@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     tg.expand(); // Расширяет Mini App на весь экран
 
     const userId = tg.initDataUnsafe.user?.id;
-    const channelId = "-1002612164165"; // Закрытый канал (-100...)
     const streamUrl = "https://varlive2.top/stream/live/boyets.html"; // ЗАМЕНИТЬ НА URL ТРАНСЛЯЦИИ
+    const backendUrl = "https://ТВОЙ_СЕРВЕР/check_sub"; // Сюда вставишь адрес сервера
 
     if (!userId) {
         document.getElementById("message").innerText = "Ошибка получения данных пользователя.";
@@ -12,10 +12,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     try {
-        const response = await fetch(`https://api.telegram.org/botYOUR_BOT_TOKEN/getChatMember?chat_id=${channelId}&user_id=${userId}`);
+        const response = await fetch(`${backendUrl}?user_id=${userId}`);
         const data = await response.json();
 
-        if (data.ok && (data.result.status === "member" || data.result.status === "administrator" || data.result.status === "creator")) {
+        if (data.status === "subscribed") {
             document.getElementById("message").innerText = "Вы подписаны! Запускаем трансляцию...";
             document.getElementById("stream").src = streamUrl;
             document.getElementById("stream").style.display = "block";
