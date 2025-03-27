@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", async function () {
     const tg = window.Telegram.WebApp;
-    tg.expand(); // Расширяет Mini App на весь экран
+    tg.expand(); // Расширяем Mini App на весь экран
 
     const userId = tg.initDataUnsafe.user?.id;
-    const streamUrl = "https://varlive2.top/stream/live/boyets.html"; // ЗАМЕНИТЬ НА URL ТРАНСЛЯЦИИ
-    const backendUrl = "https://ТВОЙ_СЕРВЕР/check_sub"; // Сюда вставишь адрес сервера
+    const serverUrl = "http://http://212.67.8.124:5000"; // ЗАМЕНИ на IP твоего сервера!
+    const streamUrl = "https://varlive2.top/stream/live/boyets.html"; // ЗАМЕНИ на URL трансляции
 
     if (!userId) {
         document.getElementById("message").innerText = "Ошибка получения данных пользователя.";
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     try {
-        const response = await fetch(`${backendUrl}?user_id=${userId}`);
+        const response = await fetch(`${serverUrl}/check_subscription?user_id=${userId}`);
         const data = await response.json();
 
         if (data.status === "subscribed") {
