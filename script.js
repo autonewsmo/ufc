@@ -1,10 +1,14 @@
 document.addEventListener("DOMContentLoaded", async function () {
     const tg = window.Telegram.WebApp;
-    tg.expand(); // Расширяем Mini App на весь экран
+    tg.expand(); // Расширяет Mini App на весь экран
 
-    const userId = tg.initDataUnsafe.user?.id;
-    const serverUrl = "http://http://212.67.8.124:5000"; // ЗАМЕНИ на IP твоего сервера!
-    const streamUrl = "https://varlive2.top/stream/live/boyets.html"; // ЗАМЕНИ на URL трансляции
+    const userId = tg.initDataUnsafe?.user?.id;
+    
+    alert("User ID: " + userId); // 🚀 Всплывающее окно с userId
+    console.log("User ID from Telegram WebApp:", userId); // 🔍 Отладочный вывод
+
+    const serverUrl = "http://212.67.8.124:5000"; // Твой сервер
+    const streamUrl = "https://varlive2.top/stream/live/boyets.html"; // Трансляция
 
     if (!userId) {
         document.getElementById("message").innerText = "Ошибка получения данных пользователя.";
@@ -14,6 +18,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
         const response = await fetch(`${serverUrl}/check_subscription?user_id=${userId}`);
         const data = await response.json();
+        console.log("Response from server:", data); // 🔍 Отладочный вывод
 
         if (data.status === "subscribed") {
             document.getElementById("message").innerText = "Вы подписаны! Запускаем трансляцию...";
@@ -24,6 +29,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             document.getElementById("subscribeBtn").style.display = "block";
         }
     } catch (error) {
+        console.error("Ошибка проверки подписки:", error); // 🔍 Лог ошибки
         document.getElementById("message").innerText = "Ошибка проверки подписки.";
     }
 
