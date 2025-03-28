@@ -1,54 +1,43 @@
 document.addEventListener("DOMContentLoaded", async function () {
     const tg = window.Telegram.WebApp;
-    tg.expand(); // Расширяем Mini App на весь экран
+    tg.expand(); 
 
-    const userId = tg.initDataUnsafe?.user?.id;
-    
-    alert("User ID: " + userId); // 🚀 Всплывающее окно с userId
-    console.log("User ID from Telegram WebApp:", userId); // 🔍 Отладка
+    console.log("🔍 initDataUnsafe:", tg.initDataUnsafe); // Отладка
 
-    const serverUrl = "http://212.67.8.124:5000"; // Твой сервер
-    const streamUrl = "https://varlive2.top/stream/live/boyets.html"; // URL трансляции
+    const userId = tg.initDataUnsafe?.user?.id || new URLSearchParams(window.location.search).get("user_id");
 
-    const messageEl = document.getElementById("message");
-    const streamEl = document.getElementById("stream");
-    const subscribeBtn = document.getElementById("subscribeBtn");
+    alert("User ID: " + userId);
+    console.log("User ID from Telegram WebApp:", userId);
 
-    // Проверка наличия userId
     if (!userId) {
-        messageEl.innerText = "Ошибка: не удалось получить ID пользователя.";
-        console.error("❌ Ошибка: не удалось получить userId из Telegram WebApp.");
+        document.getElementById("message").innerText = "Ошибка: не удалось получить ID пользователя.";
+        console.error("❌ Ошибка: userId не определён!");
         return;
     }
 
     try {
         console.log("📡 Отправляем запрос на сервер...");
-        const response = await fetch(`${serverUrl}/check_subscription?user_id=${userId}`, { cache: "no-store" });
+        const response = await fetch(`http://212.67.8.124:5000/check_subscription?user_id=${userId}`, { cache: "no-store" });
 
-        if (!response.ok) {
-            throw new Error(`Ошибка HTTP: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
 
         const data = await response.json();
-        console.log("✅ Ответ от сервера:", data); // 🔍 Лог ответа
+        console.log("✅ Ответ от сервера:", data);
 
         if (data.status === "subscribed") {
-            console.log("🎉 Пользователь подписан! Показываем трансляцию.");
-            messageEl.innerText = "Вы подписаны! Запускаем трансляцию...";
-            streamEl.src = streamUrl;
-            streamEl.style.display = "block";
+            document.getElementById("message").innerText = "Вы подписаны! Запускаем трансляцию...";
+            document.getElementById("stream").src = "https://varlive2.top/stream/live/boyets.html";
+            document.getElementById("stream").style.display = "block";
         } else {
-            console.warn("⚠️ Пользователь НЕ подписан!");
-            messageEl.innerText = "Вы не подписаны на канал!";
-            subscribeBtn.style.display = "block";
+            document.getElementById("message").innerText = "Вы не подписаны на канал!";
+            document.getElementById("subscribeBtn").style.display = "block";
         }
     } catch (error) {
         console.error("❌ Ошибка при проверке подписки:", error);
-        messageEl.innerText = "Ошибка проверки подписки.";
+        document.getElementById("message").innerText = "Ошибка проверки подписки.";
     }
 
-    // Кнопка подписки
-    subscribeBtn.addEventListener("click", function () {
+    document.getElementById("subscribeBtn").addEventListener("click", function () {
         window.open("https://t.me/+C9OTtX5Fn2tiYTJi", "_blank");
     });
 });
